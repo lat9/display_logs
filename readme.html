@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Display Log Files</title>
+
+<style type="text/css">
+<!--
+a, a:active, a:visited {
+  color: #006666;
+  text-decoration: none
+}
+a:hover {
+    color:#00CC99;
+    text-decoration: underline;
+}
+BODY, P, H1, H2, H3, H4, H5, H6, LI, TD, DD, DT {
+  font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif;
+  font-size: 10pt;
+  color: black;
+  padding: 0px;
+  margin: 20px;
+}
+H1, H2, H3, H4 {
+  font-weight: bold
+}
+h1 {
+  font-size: 20px;
+}
+h2 {
+  font-size: 16px;
+}
+code {
+  padding-left: 25px;
+}
+ol li, ul li {
+  margin: 5px 0;
+}
+.corefile, .impt { color: red; }
+img {
+  margin-left: 20px;
+  max-width: 95%;
+}
+-->
+</style>
+</head>
+
+<body>
+<a name="top" id="top"></a>
+<h1>Display Log Files for Zen Cart v1.5.0, v1.5.1 and v1.5.2</h1>
+<h3>Version 1.0.5 by lat9 &amp; design75</h3>
+<p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
+<h2>Version History:</h2>
+<ul>
+  <li>v1.0.0, 2012-12-22, Initial release.</li>
+  <li>v1.0.1, 2013-01-05, Changed /YOUR_ADMIN/display_logs.php:<ul>
+    <li>BUGFIX: v1.5.0 DIR_FS_LOGS(or any other missing directory) resulted in white-screen-of-death</li>
+    <li>Add usps*.log files; change notify*.log to notifier*.log</li>
+  </ul></li>
+  <li>v1.0.2, 2013-03-30, Changed /YOUR_ADMIN/display_logs.php:
+    <ul><li>Added the file-size of the debuglog to the listing</li></ul>
+  </li>
+  <li>v1.0.3, 2013-09-12:<ul>
+    <li>Added missing constant to /YOUR_ADMIN/includes/languages/english/display_logs.php.</li>
+    <li>Modifications to /YOUR_ADMIN/display_logs.php to account for <b>large</b> files.  The <em>notifier_trace.log</em> file, for instance, can grow to be enormous if not flushed periodically.</li>
+    <li>BUGFIX: $dir variable close/unset was in the wrong place (/YOUR_ADMIN/display_logs.php).</li>
+    <li>BUGFIX: Needed to convert htmlentities in the loaded file to ensure that any present don't disrupt the file display.</li>
+  </ul></li>
+  <li>v1.0.4, 2013-12-06:<ul>
+    <li>BUGFIX: Unprintable characters result in blank file display.</li>
+    <li>BUGFIX: Refreshing page after file delete results in error.</li>
+  </ul></li>
+  <li>v1.0.5, 2013-12-13:<ul>
+    <li>BUGFIX: Instructions not displayed if admin is running SSL.</li>
+  </ul></li>
+</ul>
+
+<h2>What it does</h2>
+<p>There have been many times that I've taken a look in one of my Zen Cart's /logs (or /cache for Zen Cart v1.5.0) directories and found some debug log files that I wasn't previously aware of. This plugin allows an admin user to view (and selectively delete) any files with names that match:</p>
+<ul>
+  <li>myDEBUG-*.log</li>
+  <li>AIM_Debug_*.log</li>
+  <li>SIM_Debug_*.log</li>
+  <li>FirstData_Debug_*.log</li>
+  <li>Linkpoint_Debug_*.log</li>
+  <li>Paypal*.log</li>
+  <li>paypal*.log</li>
+  <li>ipn_*.log</li>
+  <li>zcInstall*.log</li>
+  <li>notifier*.log</li>
+  <li>usps*.log</li>
+</ul>
+<p>The plugin searches <em>only</em> in these directories for the matching log-files:</p>
+<ul>
+  <li>/cache</li>
+  <li>/logs</li>
+  <li>/includes/modules/payment/paypal/logs</li>
+</ul>
+<p>Once installed (see below), the plugin can be accessed by a signed-in and authorized admin user by selecting <em>Tools-&gt;Display Log Files</em>.</p>
+<p class="impt"><strong>Note:</strong> Due to the potentially sensitive nature of the information contained in some of the log files, I suggest that you run your admin in SSL mode if you use this plugin.</p>
+<p>Due the the number of files that can accumulate, only the most recent 20 are displayed by default.  If you want to display more files at a time, edit the file /YOUR_ADMIN/display_logs.php and change line 23:</p>
+<pre>  define('MAX_LOG_FILES_TO_VIEW', <b>20</b>);</pre>
+<p>In addition, starting with v1.0.3, there's an additional constant (on line 24) that specifies the maximum number of bytes per file to read.  Some of the log files can get very large and cause this plugin to generate a debug-log due to an out-of-memory condition!</p>
+<pre>    if (!defined('MAX_LOG_FILE_READ_SIZE')) define('MAX_LOG_FILE_READ_SIZE', <b>80000</b>);  /*v1.0.3a*/</pre>
+<p>The tool allows the logged-in (and authorized) admin user to:</p>
+<ul>
+  <li>Sort the log files, either ascendingly or descendingly, by last-modified/creation date.</li>
+  <li>Select (via checkbox) and then delete only the log files selected.</li>
+  <li>Delete all log files currently being viewed.</li>
+  <li>View the contents of an individual log file.</li>
+</ul>
+<p>The initial screen for the tool looks similar to:</p>
+<img src="screenshot.jpg" title="Sample output" alt="Sample output" />
+
+<h2>Installation</h2>
+<p>There are <em>no</em> core-file overwrites in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_ADMIN folder to match your custom admin folder's name and then copy the contents of that admin folder to your store's installation:</p>
+<ol>
+  <li>/YOUR_ADMIN/display_logs.php</li>
+  <li>/YOUR_ADMIN/includes/extra_datafiles/display_logs_filenames.php</li>
+  <li>/YOUR_ADMIN/includes/languages/english/display_logs.php</li>
+  <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/display_logs_name.php</li>
+  <li>/YOUR_ADMIN/includes/languages/english/images/buttons/button_delete_all.gif</li>
+  <li>/YOUR_ADMIN/includes/languages/english/images/buttons/button_delete_selected.gif</li>
+</ol>
+
+<h2>Uninstall</h2>
+<p>First, delete the files that were copied to your zen-cart installation's admin directories then use your admin's <em>Tools-&gt;Run SQL Patches</em> to run the file <b>display_logs_uninstall.sql</b>.</p>
+
+</body>
+</html>
