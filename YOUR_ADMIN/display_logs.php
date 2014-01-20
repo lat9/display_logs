@@ -18,7 +18,7 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: display_log_files.php 2012/12/23 lat9  $
+// $Id: display_log_files.php 2014-01-20 lat9, Copyright 2014, Vinos de Frutas Tropicales  $
 //
   define('MAX_LOG_FILES_TO_VIEW', 20);
   if (!defined('MAX_LOG_FILE_READ_SIZE')) define('MAX_LOG_FILE_READ_SIZE', 80000);  /*v1.0.3a*/
@@ -43,7 +43,7 @@
       if ($dir != NULL) {                                           /*v1.0.1a-lat9*/
         while ($file = $dir->read()) {
           if ( ($file != '.') && ($file != '..') && substr($file, 0, 1) != '.') {
-            if (preg_match('/^(myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps).*\.log$/', $file)) {  /*v1.0.1c-lat9*/
+            if (preg_match('/^(myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps|SHIP_usps).*\.log$/', $file)) {  /*v1.0.5c-lat9*/
               $hash = sha1 ($logFolder . '/' . $file);
               $logFiles[$hash] = array ( 'name'  => $logFolder . '/' . $file,
                                          'mtime' => filemtime($logFolder . '/' . $file),
@@ -204,12 +204,12 @@
             <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
-
+<?php if (substr(HTTP_SERVER, 0, 5) != 'https') {  // display security warning about downloads if not SSL ?>
           <tr>
-            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf(TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, ((isset($_GET) && isset($_GET['sort']) && $_GET['sort'] == 'a') ? TEXT_OLDEST : TEXT_MOST_RECENT), (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); ?></td>
+            <td class="main"><?php echo WARNING_NOT_SECURE . sprintf(TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, ((isset($_GET) && isset($_GET['sort']) && $_GET['sort'] == 'a') ? TEXT_OLDEST : TEXT_MOST_RECENT), (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); ?></td>
             <td class="main" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
-
+<?php } ?>
         </table></td>
       </tr>
     </table></td>
