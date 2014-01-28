@@ -18,7 +18,6 @@
 // | to obtain it through the world-wide-web, please send a note to       |
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
-// $Id: display_log_files.php 2014-01-20 lat9, Copyright 2014, Vinos de Frutas Tropicales  $
 //
   define('MAX_LOG_FILES_TO_VIEW', 20);
   if (!defined('MAX_LOG_FILE_READ_SIZE')) define('MAX_LOG_FILE_READ_SIZE', 80000);  /*v1.0.3a*/
@@ -43,7 +42,7 @@
       if ($dir != NULL) {                                           /*v1.0.1a-lat9*/
         while ($file = $dir->read()) {
           if ( ($file != '.') && ($file != '..') && substr($file, 0, 1) != '.') {
-            if (preg_match('/^(myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps|SHIP_usps).*\.log$/', $file)) {  /*v1.0.5c-lat9*/
+            if (preg_match('/^(myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps).*\.log$/', $file)) {  /*v1.0.1c-lat9*/
               $hash = sha1 ($logFolder . '/' . $file);
               $logFiles[$hash] = array ( 'name'  => $logFolder . '/' . $file,
                                          'mtime' => filemtime($logFolder . '/' . $file),
@@ -285,8 +284,8 @@
       <tr>
         <td id="theButtons">
           <div id="dButtons">
-            <div id="dSel"><?php echo zen_image_submit(BUTTON_DELETE_SELECTED, DELETE_SELECTED_ALT, 'name="dButton" value="delete" onclick="return buttonCheck(this.value);"'); ?></div>
-            <div id="dAll"><?php echo zen_image_submit(BUTTON_DELETE_ALL, DELETE_ALL_ALT, 'name="sButton" value="all" onclick="return buttonCheck(this.value);"'); ?></div>
+            <div id="dSel"><?php echo zen_image_submit(BUTTON_DELETE_SELECTED, DELETE_SELECTED_ALT, 'name="dButton" value="delete" onclick="return buttonCheck(\'delete\');"'); /*v1.0.6c*/ ?></div>
+            <div id="dAll"><?php echo zen_image_submit(BUTTON_DELETE_ALL, DELETE_ALL_ALT, 'name="sButton" value="all" onclick="return buttonCheck(\'all\');"'); /*v1.0.6c*/ ?></div>
           </div>
           <div id="dSpace">&nbsp;</div>
         </td>

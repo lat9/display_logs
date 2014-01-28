@@ -41,6 +41,7 @@ img {
   margin-left: 20px;
   max-width: 95%;
 }
+.smalltext { font-size: smaller; }
 -->
 </style>
 </head>
@@ -48,13 +49,13 @@ img {
 <body>
 <a name="top" id="top"></a>
 <h1>Display Log Files for Zen Cart v1.5.0, v1.5.1 and v1.5.2</h1>
-<h3>Version 1.0.5 by lat9 &amp; design75</h3>
+<h3>Version 1.0.6 by lat9 &amp; design75</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
 <h2>Version History:</h2>
 <ul>
   <li>v1.0.0, 2012-12-22, Initial release.</li>
   <li>v1.0.1, 2013-01-05, Changed /YOUR_ADMIN/display_logs.php:<ul>
-    <li>BUGFIX: v1.5.0 DIR_FS_LOGS(or any other missing directory) resulted in white-screen-of-death</li>
+    <li>BUGFIX: v1.5.0 DIR_FS_LOGS (or any other missing directory) resulted in white-screen-of-death</li>
     <li>Add usps*.log files; change notify*.log to notifier*.log</li>
   </ul></li>
   <li>v1.0.2, 2013-03-30, Changed /YOUR_ADMIN/display_logs.php:
@@ -73,6 +74,9 @@ img {
   <li>v1.0.5, 2014-01-20:<ul>
     <li>BUGFIX: USPS shipping logs now start with SHIP_usps, not just usps.</li>
   </ul></li>
+  <li>v1.0.6, 2014-02-28:<ul>
+    <li>BUGFIX: When this plugin was used in conjunction with the <em>CSS Buttons for Admin</em> plugin, the "Delete All" button no longer functioned.</li>
+  </ul></li>
 </ul>
 
 <h2>What it does</h2>
@@ -87,9 +91,9 @@ img {
   <li>paypal*.log</li>
   <li>ipn_*.log</li>
   <li>zcInstall*.log</li>
-  <li>notifier*.log</li>
-  <li>usps*.log</li>
-  <li>SHIP_usps*.log</li>
+  <li>notifier*.log <span class="smalltext">(v1.0.1 and later)</span></li>
+  <li>usps*.log <span class="smalltext">(v1.0.1 and later)</span></li>
+  <li>SHIP_usps*.log <span class="smalltext">(v1.0.5 and later)</span></li>
 </ul>
 <p>The plugin searches <em>only</em> in these directories for the matching log-files:</p>
 <ul>
