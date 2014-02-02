@@ -285,8 +285,8 @@
       <tr>
         <td id="theButtons">
           <div id="dButtons">
-            <div id="dSel"><?php echo zen_image_submit(BUTTON_DELETE_SELECTED, DELETE_SELECTED_ALT, 'name="dButton" value="delete" onclick="return buttonCheck(this.value);"'); ?></div>
-            <div id="dAll"><?php echo zen_image_submit(BUTTON_DELETE_ALL, DELETE_ALL_ALT, 'name="sButton" value="all" onclick="return buttonCheck(this.value);"'); ?></div>
+            <div id="dSel"><?php echo zen_image_submit(BUTTON_DELETE_SELECTED, DELETE_SELECTED_ALT, 'name="dButton" value="delete" onclick="return buttonCheck(\'delete\');"'); /*v1.0.6c*/ ?></div>
+            <div id="dAll"><?php echo zen_image_submit(BUTTON_DELETE_ALL, DELETE_ALL_ALT, 'name="sButton" value="all" onclick="return buttonCheck(\'all\');"'); /*v1.0.6c*/ ?></div>
           </div>
           <div id="dSpace">&nbsp;</div>
         </td>
