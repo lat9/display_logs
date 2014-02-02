@@ -206,7 +206,7 @@
           </tr>
 
           <tr>
-            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf(TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, ((isset($_GET) && isset($_GET['sort']) && $_GET['sort'] == 'a') ? TEXT_OLDEST : TEXT_MOST_RECENT), (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); ?></td>
+            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf(TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, ((isset($_GET) && isset($_GET['sort']) && $_GET['sort'] == 'a') ? TEXT_OLDEST : TEXT_MOST_RECENT), (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); //-v1.0.6c ?></td>
             <td class="main" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
 

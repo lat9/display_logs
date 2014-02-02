@@ -48,7 +48,7 @@ img {
 <body>
 <a name="top" id="top"></a>
 <h1>Display Log Files for Zen Cart v1.5.0, v1.5.1 and v1.5.2</h1>
-<h3>Version 1.0.5 by lat9 &amp; design75</h3>
+<h3>Version 1.0.6 by lat9 &amp; design75</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
 <h2>Version History:</h2>
 <ul>
@@ -67,11 +67,15 @@ img {
     <li>BUGFIX: Needed to convert htmlentities in the loaded file to ensure that any present don't disrupt the file display.</li>
   </ul></li>
   <li>v1.0.4, 2013-12-06:<ul>
-    <li>BUGFIX: Unprintable characters result in blank file display.</li>
+    <li>BUGFIX: Unprintable characters result in blank display.</li>
     <li>BUGFIX: Refreshing page after file delete results in error.</li>
   </ul></li>
-  <li>v1.0.5, 2013-12-13:<ul>
-    <li>BUGFIX: Instructions not displayed if admin is running SSL.</li>
+  <li>v1.0.5, 2014-01-20:<ul>
+    <li>BUGFIX: USPS shipping logs now start with SHIP_usps, not just usps.</li>
+  </ul></li>
+  <li>v1.0.6, 2014-02-02:<ul>
+    <li>BUGFIX: Delete "all" button doesn't work if the CSS buttons for Admin plugin is also installed.</li>
+    <li>BUGFIX: Instructions aren't displayed if the admin is running in SSL mode.</li>
   </ul></li>
 </ul>
 
@@ -89,6 +93,7 @@ img {
   <li>zcInstall*.log</li>
   <li>notifier*.log</li>
   <li>usps*.log</li>
+  <li>SHIP_usps*.log</li>
 </ul>
 <p>The plugin searches <em>only</em> in these directories for the matching log-files:</p>
 <ul>
