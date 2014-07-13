@@ -48,7 +48,7 @@ img {
 <body>
 <a name="top" id="top"></a>
 <h1>Display Log Files for Zen Cart v1.5.0, v1.5.1 and v1.5.2</h1>
-<h3>Version 1.0.6 by lat9 &amp; design75</h3>
+<h3>Version 1.0.7 by lat9 &amp; design75</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
 <h2>Version History:</h2>
 <ul>
@@ -76,6 +76,9 @@ img {
   <li>v1.0.6, 2014-02-02:<ul>
     <li>BUGFIX: Delete "all" button doesn't work if the CSS buttons for Admin plugin is also installed.</li>
     <li>BUGFIX: Instructions aren't displayed if the admin is running in SSL mode.</li>
+  </ul></li>
+    <li>v1.0.7, 2014-07-07:<ul>
+    <li>ADDED ENHANCEMENT using code from Torvista used in http://www.zen-cart.com/showthread.php?181798-Show-Debug-Files-Automatically to display error logs in Admin header area upon the log being generated.</li>
   </ul></li>
 </ul>
 
@@ -118,7 +121,7 @@ img {
 <img src="screenshot.jpg" title="Sample output" alt="Sample output" />
 
 <h2>Installation</h2>
-<p>There are <em>no</em> core-file overwrites in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_ADMIN folder to match your custom admin folder's name and then copy the contents of that admin folder to your store's installation:</p>
+<p>There is <strong>one</strong> core-file overwrite in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_ADMIN folder to match your custom admin folder's name. Merge the core file YOUR_ADMIN/includes/header.php and then copy the contents of that admin folder to your store's installation:</p>
 <ol>
   <li>/YOUR_ADMIN/display_logs.php</li>
   <li>/YOUR_ADMIN/includes/extra_datafiles/display_logs_filenames.php</li>
@@ -126,10 +129,12 @@ img {
   <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/display_logs_name.php</li>
   <li>/YOUR_ADMIN/includes/languages/english/images/buttons/button_delete_all.gif</li>
   <li>/YOUR_ADMIN/includes/languages/english/images/buttons/button_delete_selected.gif</li>
+  <li>/YOUR_ADMIN/includes/header.php (CORE FILE)</li>
+  
 </ol>
 
 <h2>Uninstall</h2>
-<p>First, delete the files that were copied to your zen-cart installation's admin directories then use your admin's <em>Tools-&gt;Run SQL Patches</em> to run the file <b>display_logs_uninstall.sql</b>.</p>
+<p>First, delete the files that were copied to your zen-cart installation's admin directories. Restore your backup up of  then use your admin's <em>Tools-&gt;Run SQL Patches</em> to run the file <b>display_logs_uninstall.sql</b>.</p>
 
 </body>
 </html>
