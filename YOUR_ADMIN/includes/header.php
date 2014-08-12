@@ -116,16 +116,19 @@ if ((basename($PHP_SELF) != FILENAME_DEFINE_LANGUAGE . '.php') and (basename($PH
       }
     }
   }
-// check for debug logs
-$path = str_replace(DIR_FS_CATALOG, '../', DIR_FS_SQL_CACHE).'/';
-if (count(glob($path . '*.*')) > 1) {//only htaccess and index.php are in directory normally
-$directory = opendir($path);
-while($item = readdir($directory)){
-if (strpos($item, '.log',1)){
-$messageStack->add('Debug log file exists: '.DIR_FS_SQL_CACHE.'/'.$item);
-}
-}
-} 
+  
+//-bof-display_logs-lat9-Incorporate torvista's "log note"  *** 1 of 1
+  // check for debug logs
+  $path = (defined ('DIR_FS_LOGS')) ? DIR_FS_LOGS : DIR_FS_SQL_CACHE;
+  $log_files = glob ($path . '/myDEBUG-*.log');
+  $num_log_files = ($log_files === false) ? 0 : count ($log_files);
+  unset ($log_files);
+  if ($num_log_files > 0) {
+    $messageStack->add ($num_log_files . ' debug-log files exist, click <a href="' . zen_href_link (FILENAME_DISPLAY_LOGS) . '">here</a> to view.', 'caution');
+    
+  }
+//-eof-display_logs_lat9 *** 1 of 1 ***
+
 // display alerts/error messages, if any
   if ($messageStack->size > 0) {
     echo $messageStack->output();

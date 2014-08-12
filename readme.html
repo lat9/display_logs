@@ -30,6 +30,11 @@ h1 {
 h2 {
   font-size: 16px;
 }
+h1, h2 {
+  background-color: #9999ff;
+  border: 1px solid #000099;
+  padding: 5px;
+}
 code {
   padding-left: 25px;
 }
@@ -47,8 +52,8 @@ img {
 
 <body>
 <a name="top" id="top"></a>
-<h1>Display Log Files for Zen Cart v1.5.0, v1.5.1 and v1.5.2</h1>
-<h3>Version 1.0.7 by lat9 &amp; design75</h3>
+<h1>Display Log Files for Zen Cart v1.5.0, v1.5.1, v1.5.2 and v1.5.3</h1>
+<h3>Version 1.0.8 by lat9 &amp; design75</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
 <h2>Version History:</h2>
 <ul>
@@ -77,8 +82,11 @@ img {
     <li>BUGFIX: Delete "all" button doesn't work if the CSS buttons for Admin plugin is also installed.</li>
     <li>BUGFIX: Instructions aren't displayed if the admin is running in SSL mode.</li>
   </ul></li>
-    <li>v1.0.7, 2014-07-07:<ul>
-    <li>ADDED ENHANCEMENT using code from Torvista used in http://www.zen-cart.com/showthread.php?181798-Show-Debug-Files-Automatically to display error logs in Admin header area upon the log being generated.</li>
+  <li>v1.0.7, 2014-07-07:<ul>
+    <li>ADDED ENHANCEMENT using code from <em>torvista</em> <a href="http://www.zen-cart.com/showthread.php?181798-Show-Debug-Files-Automatically">here</a> to display error logs in Admin header area upon the log being generated.</li>
+  </ul></li>
+  <li>v1.0.8, 2014-08-12:<ul>
+    <li>Slight modification to change introducted in v1.0.7; if debug-logs are present, a count is shown in the admin header with a link to the <em>Display Logs</em> page.</li>
   </ul></li>
 </ul>
 
@@ -104,7 +112,7 @@ img {
   <li>/logs</li>
   <li>/includes/modules/payment/paypal/logs</li>
 </ul>
-<p>Once installed (see below), the plugin can be accessed by a signed-in and authorized admin user by selecting <em>Tools-&gt;Display Log Files</em>.</p>
+<p>Once installed (see below), the plugin can be accessed by a signed-in and authorized admin user by selecting <em>Tools-&gt;Display Log Files</em>.  In addition, starting with v1.0.8, a message is shown in your admin's header if any <b>myDEBUG-*.log</b> files are found in the /logs directory, if defined, or the /cache directory otherwise.</p>
 <p class="impt"><strong>Note:</strong> Due to the potentially sensitive nature of the information contained in some of the log files, I suggest that you run your admin in SSL mode if you use this plugin.</p>
 <p>Due the the number of files that can accumulate, only the most recent 20 are displayed by default.  If you want to display more files at a time, edit the file /YOUR_ADMIN/display_logs.php and change line 23:</p>
 <pre>  define('MAX_LOG_FILES_TO_VIEW', <b>20</b>);</pre>
@@ -124,12 +132,13 @@ img {
 <p>There is <strong>one</strong> core-file overwrite in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_ADMIN folder to match your custom admin folder's name. Merge the core file YOUR_ADMIN/includes/header.php and then copy the contents of that admin folder to your store's installation:</p>
 <ol>
   <li>/YOUR_ADMIN/display_logs.php</li>
+  <li><span class="corefile">/YOUR_ADMIN/includes/header.php</span></li>
   <li>/YOUR_ADMIN/includes/extra_datafiles/display_logs_filenames.php</li>
   <li>/YOUR_ADMIN/includes/languages/english/display_logs.php</li>
   <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/display_logs_name.php</li>
   <li>/YOUR_ADMIN/includes/languages/english/images/buttons/button_delete_all.gif</li>
   <li>/YOUR_ADMIN/includes/languages/english/images/buttons/button_delete_selected.gif</li>
-  <li>/YOUR_ADMIN/includes/header.php (CORE FILE)</li>
+
   
 </ol>
 
