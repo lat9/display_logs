@@ -1,35 +1,3 @@
 <?php
-//
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2012 Vinos de Frutas Tropicales                        |
-// | Copyright (c) 2004 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-// $Id: init_display_logs.php,v1.0 2012/12/21,lat9 $
-//
-    if (!defined('IS_ADMIN_FLAG')) {
-        die('Illegal Access');
-    } 
-
-    //----
-    // If the installation supports admin-page registration (i.e. v1.5.0 and later), then
-    // register the New Tools tool into the admin menu structure.
-    //
-    if (function_exists('zen_register_admin_page')) {
-      if (!zen_page_key_exists('toolsDisplayLogs')) {
-        zen_register_admin_page('toolsDisplayLogs', 'BOX_TOOLS_DISPLAY_LOGS', 'FILENAME_DISPLAY_LOGS','' ,'tools', 'Y', 20);
-      }    
-    }
+//-NOTE: This file is no longer needed for your store.  Its purpose is to overwrite the initialization handling for v1.x.x of the "Display Logs" plugin.
+//       That processing has been moved to /admin/includes/init_includes/init_display_logs.php
