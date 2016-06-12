@@ -1,22 +1,15 @@
 <?php
+// -----
+// Part of the "Display Logs" plugin for Zen Cart v1.5.0 or later
 //
-// +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce                                       |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004 The zen-cart developers                           |
-// |                                                                      |
-// | http://www.zen-cart.com/index.php                                    |
-// |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at the following url:           |
-// | http://www.zen-cart.com/license/2_0.txt.                             |
-// | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@zen-cart.com so we can mail you a copy immediately.          |
-// +----------------------------------------------------------------------+
-// $Id: display_logs_name.php,v1.0 2012/12/20,lat9 $
+// Copyright (c) 2012-2016, Vinos de Frutas Tropicales (lat9)
 //
-define('BOX_TOOLS_DISPLAY_LOGS', 'Display Log Files'); 
+define ('BOX_TOOLS_DISPLAY_LOGS', 'Display Log Files');
+
+// -----
+// This message is displayed in the admin header if any debug-logs are present.  When translating this message, be sure to keep the following "sprintf" tokens:
+//
+// %1$u ... Identifies the number of files present
+// %2$s ... Contains the href to your admin's display-logs tool.
+//
+define ('DISPLAY_LOGS_MESSAGE_LOGS_PRESENT', '%1$u debug-log files exist, click <a href="%2$s">here</a> to view.');
