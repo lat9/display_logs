@@ -273,7 +273,7 @@ foreach ($logFiles as $curHash => $curFile) {
         );
         $contents[] = array(
             'align' => 'left', 
-            'text' => '<div id="fContents">' . nl2br (htmlentities (trim (@file_get_contents($curFile['name'], NULL, NULL, -1, MAX_LOG_FILE_READ_SIZE)), ENT_COMPAT+ENT_IGNORE, CHARSET, false)) . '</div>'
+            'text' => '<div id="fContents">' . nl2br(htmlentities(trim(file_get_contents($curFile['name'], false, NULL, 0, MAX_LOG_FILE_READ_SIZE)), ENT_COMPAT+ENT_IGNORE, CHARSET, false)) . '</div>'
         );
     }
 }
