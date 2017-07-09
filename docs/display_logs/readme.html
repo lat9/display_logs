@@ -61,9 +61,8 @@ th { background-color: #eee; }
 
 <body>
   <h1>Display Log Files for Zen Cart v1.5.0 (and later)</h1>
-  <h3>Version 2.0.1 by lat9 &amp; Design75</h3>
+  <h3>Version 2.1.0 by lat9 &amp; Design75</h3>
   <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
-
 
   <div class="tab-container" id="outer-container">
     <ul class="etabs">
@@ -74,21 +73,29 @@ th { background-color: #eee; }
     <div class="panel-container">
       <div id="overview">
         <h2>What it does</h2>
-        <p>There have been many times that I've taken a look in one of my Zen Cart's /logs (or /cache for Zen Cart v1.5.0) directories and found some debug log files that I wasn't previously aware of. This plugin allows an admin user to view (and selectively delete) any files with names that match:</p>
-        <ul>
-          <li>myDEBUG-*.log</li>
-          <li>AIM_Debug_*.log</li>
-          <li>SIM_Debug_*.log</li>
-          <li>FirstData_Debug_*.log</li>
-          <li>Linkpoint_Debug_*.log</li>
-          <li>Paypal*.log</li>
-          <li>paypal*.log</li>
-          <li>ipn_*.log</li>
-          <li>zcInstall*.log</li>
-          <li>notifier*.log</li>
-          <li>usps*.log</li>
-          <li>SHIP_usps*.log</li>
-        </ul>
+        <p>There have been many times that I've taken a look in one of my Zen Cart's /logs (or /cache for Zen Cart v1.5.0) directories and found some debug log files that I wasn't previously aware of. This plugin allows an admin user to view (and selectively delete) any .log files with names that, starting with v2.1.0, match a set of values configured within <em>Configuration-&gt;Logging</em>:</p>
+        <table>
+          <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>Display Logs: Display Maximum</td>
+            <td>Identifies the maximum number of files that the plugin displays on a page; default: 20.</td>
+          </tr>
+          <tr>
+            <td>Display Logs: Maximum File Size</td>
+            <td>Identifies the number of bytes of the currently-selected file to display before truncation; default: 80000.</td>
+          </tr>
+          <tr>
+            <td>Display Logs: Included File Prefixes</td>
+            <td>Identifies the filename prefixes to <em>include</em> in the display; all files displayed have a file-extension of <code class="no-pad">.log</code>.  The value is a pipe-separated list (|); any intervening spaces are removed prior to the plugin's usage. The default list is <code class="no-pad">myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps|SHIP_usps</code>.</td>
+          </tr>
+          <tr>
+            <td>Display Logs: Excluded File Prefixes</td>
+            <td>Identifies the filename prefixes to <em>exclude</em> from the display.  The value is a pipe-separated list (|); any intervening spaces are removed prior to the plugin's usage.  The default value is an empty string.</td>
+          </tr>
+        </table>
         <p>The plugin searches <em>only</em> in these directories for the matching log-files:</p>
         <ul>
           <li>/cache</li>
@@ -97,10 +104,6 @@ th { background-color: #eee; }
         </ul>
         <p>Once <a href="#installation" class="side-link">installed</a>, the plugin can be accessed by a signed-in and authorized admin user by selecting <em>Tools-&gt;Display Log Files</em>.  In addition, starting with v1.0.8, a message is shown in your admin's header if any <b>myDEBUG-*.log</b> files are found in the /logs directory, if defined, or the /cache directory otherwise.</p>
         <p class="impt"><strong>Note:</strong> Due to the potentially sensitive nature of the information contained in some of the log files, I suggest that you run your admin in SSL mode if you use this plugin.</p>
-        <p>Due the the number of files that can accumulate, only the most recent 20 are displayed by default.  If you want to display more files at a time, edit the file /YOUR_ADMIN/display_logs.php and change line 7:</p>
-        <pre>define('MAX_LOG_FILES_TO_VIEW', <b>20</b>);</pre>
-        <p>In addition, starting with v1.0.3, there's another constant (on line 8) that specifies the maximum number of bytes per file to read.  Some of the log files can get very large and cause this plugin to generate a debug-log due to an out-of-memory condition!</p>
-        <pre>if (!defined('MAX_LOG_FILE_READ_SIZE')) define('MAX_LOG_FILE_READ_SIZE', <b>80000</b>);</pre>
         <p>The tool allows the logged-in (and authorized) admin user to:</p>
         <ul>
           <li>Sort the log files by the last-modified date or file-size, either ascending or descending.</li>
@@ -192,8 +195,9 @@ th { background-color: #eee; }
             
             <div id="changes">
               <ul>
-                <li>v2.0.1, 2017-07-xx:<ul>
+                <li>v2.1.0, 2017-07-09:<ul>
                   <li>BUGFIX: Selected log-file contents not displayed under PHP 7.1.4.</li>
+                  <li>CHANGE: Update <b>Configuration-&gt;Logging</b> to include various configuration settings for the plugin's display.</li>
                 </ul></li>
                 <li>v2.0.0, 2016-06-12:<ul>
                   <li>CHANGE: Move <span class="corefile">core-file</span> change into the plugin's initialization handling &mdash; no more <span class="corefile">core-file overwrites</span>!</li>

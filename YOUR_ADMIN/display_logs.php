@@ -4,8 +4,6 @@
 //
 // Copyright (c) 2012-2017, Vinos de Frutas Tropicales (lat9)
 //
-define('MAX_LOG_FILES_TO_VIEW', 20);
-if (!defined('MAX_LOG_FILE_READ_SIZE')) define('MAX_LOG_FILE_READ_SIZE', 80000);
 
 // -----
 // Functions that gather the log-related files and provide the ascending/descending sort thereof.
@@ -64,27 +62,59 @@ if (isset($_GET['sort'])) {
 }
 
 // -----
-// If debug-logs-only has been selected, display only those files.
+// If debug-logs-only has been selected, display only those files.  If multiple file prefixes are
+// to be either included or excluded, wrap that value with parenthese to make preg_match "happy".
 //
-$files_to_match = (isset ($_GET['debug_only'])) ? 'myDEBUG-' : '(myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps|SHIP_usps)';
+if (isset($_GET['debug_only'])) {
+    $files_to_match = 'myDEBUG-(adm-)?[0-9]+-[0-9]+';
+    $files_to_exclude = '';
+} else {
+    $files_to_match = str_replace(' ', '', DISPLAY_LOGS_INCLUDED_FILES);
+    if (strpos($files_to_match, '|') !== false) {
+        $files_to_match = "($files_to_match)";
+    }
+    $files_to_match .= '.*';
+    
+    $files_to_exclude = str_replace(' ', '', DISPLAY_LOGS_EXCLUDED_FILES);
+    if (strpos($files_to_exclude, '|') !== false) {
+        $files_to_exclude = "($files_to_exclude)";
+    }
+    if ($files_to_exclude != '') {
+        $files_to_exclude .= '.*';
+    }
+}
+
+// -----
+// Determine (and properly default) the number of log files to be displayed.
+//
+$max_logs_to_display = (int)DISPLAY_LOGS_MAX_DISPLAY;
+if ($max_logs_to_display < 1) {
+    $max_logs_to_display = 20;
+}
 
 // -----
 // Gather the current log files.
 //
 $logFiles = array();
+$numLogFiles = 0;
 foreach (array (DIR_FS_LOGS, DIR_FS_SQL_CACHE, DIR_FS_CATALOG . '/includes/modules/payment/paypal/logs') as $logFolder) {
     $logFolder = rtrim($logFolder, '/');
     $dir = @dir($logFolder);
     if ($dir != NULL) {
         while ($file = $dir->read()) {
             if ( ($file != '.') && ($file != '..') && substr($file, 0, 1) != '.') {
-                if (preg_match('/^' . $files_to_match . '.*\.log$/', $file)) {
-                    $hash = sha1($logFolder . '/' . $file);
-                    $logFiles[$hash] = array ( 
-                        'name'  => $logFolder . '/' . $file,
-                        'mtime' => filemtime($logFolder . '/' . $file),
-                        'filesize' => filesize($logFolder . '/' . $file)
-                    );
+                if (preg_match('/^' . $files_to_match . '\.log$/', $file)) {
+                    if ($files_to_exclude == '' || !preg_match('/^' . $files_to_exclude . '\.log$/', $file)) {
+                        $numLogFiles++;
+                        if ($numLogFiles <= $max_logs_to_display) {
+                            $hash = sha1($logFolder . '/' . $file);
+                            $logFiles[$hash] = array ( 
+                                'name'  => $logFolder . '/' . $file,
+                                'mtime' => filemtime($logFolder . '/' . $file),
+                                'filesize' => filesize($logFolder . '/' . $file)
+                            );
+                        }
+                    }
                 }
             }
         }
@@ -100,8 +130,8 @@ reset($logFiles);
 //
 $action = (isset($_GET['action'])) ? $_GET['action'] : '';  
 if (zen_not_null($action) && $action == 'delete') {
-    if (isset($_POST['dList']) && sizeof($_POST['dList']) != 0) {
-        $numFiles = sizeof($_POST['dList']);
+    if (isset($_POST['dList']) && count($_POST['dList']) != 0) {
+        $numFiles = count($_POST['dList']);
         $filesDeleted = 0;
         foreach ($_POST['dList'] as $currentHash => $value) {
             if (array_key_exists($currentHash, $logFiles)) {
@@ -129,21 +159,18 @@ if (isset($_GET['fID'])) {
         unset($_GET['fID']);
         $getFile = key($logFiles);
     }
-} elseif (sizeof($logFiles) != 0) {
+} elseif (count($logFiles) != 0) {
     $getFile = key($logFiles);
 } else {
     $getFile = '';
 }
-$numLogFiles = count($logFiles);
 
 // -----
-// If more files are in the log-file array than will be displayed, free up the memory associated with
-// those files' entries by popping them off the end of the array.
+// "Sanitize" the maximum file-size to be fully read, defaulting if the configured value is not a positive integer.
 //
-if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
-    for ($i = 0, $n = $numLogFiles - MAX_LOG_FILES_TO_VIEW; $i < $n; $i++) {
-        array_pop($logFiles);
-    }
+$max_log_file_size = (int)DISPLAY_LOGS_MAX_FILE_SIZE;
+if ($max_log_file_size < 1) {
+    $max_log_file_size = 80000;
 }
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -159,7 +186,7 @@ if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
 #dButtons, #dSpace { width: 50%; }
 #dAll { float: right; padding-right: 20px; }
 #dSel { float: right; }
-#fContents { overflow: auto; max-height: <?php echo 23 * MAX_LOG_FILES_TO_VIEW; ?>px; }
+#fContents { overflow: auto; max-height: <?php echo 23 * $max_logs_to_display; ?>px; }
 #contentsOuter { vertical-align: top; }
 .bigfile { font-weight: bold; color: red; }
 -->
@@ -223,12 +250,12 @@ if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
           </tr>
 
           <tr>
-            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf(TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, $sort_description, (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); ?></td>
+            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf(TEXT_INSTRUCTIONS, $max_log_file_size, $sort_description, (($numLogFiles > $max_logs_to_display) ? $max_logs_to_display : $numLogFiles), $numLogFiles, $files_to_match, $files_to_exclude); ?></td>
             <td class="main" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
           
           <tr colspan="2">
-            <td><?php echo zen_draw_form('logs_form', FILENAME_DISPLAY_LOGS, '', 'get') . '<b>' . DISPLAY_DEBUG_LOGS_ONLY . '</b>&nbsp;&nbsp;' . zen_draw_checkbox_field('debug_only', 'on', (isset ($_GET['debug_only'])) ? true : false, '', 'onclick="this.form.submit();"') . zen_draw_hidden_field('sort', $sort) . '</form>'; ?></td>
+            <td><?php echo zen_draw_form('logs_form', FILENAME_DISPLAY_LOGS, '', 'get') . '<b>' . DISPLAY_DEBUG_LOGS_ONLY . '</b>&nbsp;&nbsp;' . zen_draw_checkbox_field('debug_only', 'on', (isset($_GET['debug_only'])) ? true : false, '', 'onclick="this.form.submit();"') . zen_draw_hidden_field('sort', $sort) . '</form>'; ?></td>
           </tr>
 
         </table></td>
@@ -262,7 +289,7 @@ foreach ($logFiles as $curHash => $curFile) {
               <tr>
                 <td class="dataTableContent" align="left"><?php echo $curFile['name']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo date(PHP_DATE_TIME_FORMAT, $curFile['mtime']); ?></td>
-                <td class="dataTableContent<?php echo ($curFile['filesize'] > MAX_LOG_FILE_READ_SIZE) ? ' bigfile' : ''; ?>" align="center"><?php echo $curFile['filesize']; ?></td>
+                <td class="dataTableContent<?php echo ($curFile['filesize'] > $max_log_file_size) ? ' bigfile' : ''; ?>" align="center"><?php echo $curFile['filesize']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo zen_draw_checkbox_field('dList[' . $curHash . ']', false, false, '', 'class="cBox"'); ?></td>
                 <td class="dataTableContent" align="right"><?php if ($getFile == $curHash) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_DISPLAY_LOGS, 'fID=' . $curHash . '&amp;' . zen_get_all_get_params(array('fID'))) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', ICON_INFO_VIEW) . '</a>'; } ?>&nbsp;</td>
               </tr>
@@ -273,7 +300,7 @@ foreach ($logFiles as $curHash => $curFile) {
         );
         $contents[] = array(
             'align' => 'left', 
-            'text' => '<div id="fContents">' . nl2br(htmlentities(trim(file_get_contents($curFile['name'], false, NULL, 0, MAX_LOG_FILE_READ_SIZE)), ENT_COMPAT+ENT_IGNORE, CHARSET, false)) . '</div>'
+            'text' => '<div id="fContents">' . nl2br(htmlentities(trim(file_get_contents($curFile['name'], false, NULL, 0, $max_log_file_size)), ENT_COMPAT+ENT_IGNORE, CHARSET, false)) . '</div>'
         );
     }
 }
