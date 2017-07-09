@@ -2,30 +2,30 @@
 // -----
 // Part of the "Display Logs" plugin for Zen Cart v1.5.0 or later
 //
-// Copyright (c) 2012-2016, Vinos de Frutas Tropicales (lat9)
+// Copyright (c) 2012-2017, Vinos de Frutas Tropicales (lat9)
 //
-define ('MAX_LOG_FILES_TO_VIEW', 20);
+define('MAX_LOG_FILES_TO_VIEW', 20);
 if (!defined('MAX_LOG_FILE_READ_SIZE')) define('MAX_LOG_FILE_READ_SIZE', 80000);
 
 // -----
 // Functions that gather the log-related files and provide the ascending/descending sort thereof.
 //  
-function sortLogDateAsc ($a, $b) 
+function sortLogDateAsc($a, $b) 
 {
     if ($a['mtime'] == $b['mtime']) return 0;
     return ($a['mtime'] < $b['mtime']) ? -1 : 1;
 }
-function sortLogDateDesc ($a, $b) 
+function sortLogDateDesc($a, $b) 
 {
     if ($a['mtime'] == $b['mtime']) return 0;
     return ($a['mtime'] > $b['mtime']) ? -1 : 1;
 }
-function sortLogSizeAsc ($a, $b)
+function sortLogSizeAsc($a, $b)
 {
     if ($a['filesize'] == $b['filesize']) return 0;
     return ($a['filesize'] < $b['filesize']) ? -1 : 1;
 }
-function sortLogSizeDesc ($a, $b)
+function sortLogSizeDesc($a, $b)
 {
     if ($a['filesize'] == $b['filesize']) return 0;
     return ($a['filesize'] > $b['filesize']) ? -1 : 1;
@@ -34,7 +34,7 @@ function sortLogSizeDesc ($a, $b)
 // -----
 // Start main processing ...
 //  
-require ('includes/application_top.php');
+require 'includes/application_top.php';
 
 // -----
 // Determine the current sort-method chosen by the admin user.
@@ -42,7 +42,7 @@ require ('includes/application_top.php');
 $sort = 'date_d';
 $sort_description = TEXT_MOST_RECENT;
 $sort_function = 'sortLogDateDesc';
-if (isset ($_GET['sort'])) {
+if (isset($_GET['sort'])) {
     $sort = $_GET['sort'];
     switch ($sort) {
         case 'date_a':
@@ -73,27 +73,27 @@ $files_to_match = (isset ($_GET['debug_only'])) ? 'myDEBUG-' : '(myDEBUG-|AIM_De
 //
 $logFiles = array();
 foreach (array (DIR_FS_LOGS, DIR_FS_SQL_CACHE, DIR_FS_CATALOG . '/includes/modules/payment/paypal/logs') as $logFolder) {
-    $logFolder = rtrim ($logFolder, '/');
-    $dir = @dir ($logFolder);
+    $logFolder = rtrim($logFolder, '/');
+    $dir = @dir($logFolder);
     if ($dir != NULL) {
-        while ($file = $dir->read ()) {
+        while ($file = $dir->read()) {
             if ( ($file != '.') && ($file != '..') && substr($file, 0, 1) != '.') {
                 if (preg_match('/^' . $files_to_match . '.*\.log$/', $file)) {
-                    $hash = sha1 ($logFolder . '/' . $file);
+                    $hash = sha1($logFolder . '/' . $file);
                     $logFiles[$hash] = array ( 
                         'name'  => $logFolder . '/' . $file,
-                        'mtime' => filemtime ($logFolder . '/' . $file),
-                        'filesize' => filesize ($logFolder . '/' . $file)
+                        'mtime' => filemtime($logFolder . '/' . $file),
+                        'filesize' => filesize($logFolder . '/' . $file)
                     );
                 }
             }
         }
         $dir->close();
-        unset ($dir);
+        unset($dir);
     }
 }
-uasort ($logFiles, $sort_function);
-reset ($logFiles);
+uasort($logFiles, $sort_function);
+reset($logFiles);
 
 // -----
 // If any file delete requests have been made, process them first.
@@ -104,37 +104,37 @@ if (zen_not_null($action) && $action == 'delete') {
         $numFiles = sizeof($_POST['dList']);
         $filesDeleted = 0;
         foreach ($_POST['dList'] as $currentHash => $value) {
-            if (array_key_exists ($currentHash, $logFiles)) {
-                if (is_writeable ($logFiles[$currentHash]['name'])) {
-                    zen_remove ($logFiles[$currentHash]['name']);
+            if (array_key_exists($currentHash, $logFiles)) {
+                if (is_writeable($logFiles[$currentHash]['name'])) {
+                    zen_remove($logFiles[$currentHash]['name']);
                     $filesDeleted++;
                 }
             }
         }
         if ($filesDeleted == $numFiles) {
-            $messageStack->add_session (sprintf (SUCCESS_FILES_DELETED, $numFiles), 'success');
+            $messageStack->add_session(sprintf (SUCCESS_FILES_DELETED, $numFiles), 'success');
         } else {
-            $messageStack->add_session (sprintf (WARNING_SOME_FILES_DELETED, $filesDeleted, $numFiles), 'warning');
+            $messageStack->add_session(sprintf (WARNING_SOME_FILES_DELETED, $filesDeleted, $numFiles), 'warning');
         }
     } else {
-        $messageStack->add_session (WARNING_NO_FILES_SELECTED, 'warning');
+        $messageStack->add_session(WARNING_NO_FILES_SELECTED, 'warning');
     }
-    zen_redirect (zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('action'))));
+    zen_redirect (zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('action'))));
 }
 
-if (isset ($_GET['fID'])) {
-    if (array_key_exists ($_GET['fID'], $logFiles)) {
+if (isset($_GET['fID'])) {
+    if (array_key_exists($_GET['fID'], $logFiles)) {
         $getFile = $_GET['fID'];
     } else {
-        unset ($_GET['fID']);
-        $getFile = key ($logFiles);
+        unset($_GET['fID']);
+        $getFile = key($logFiles);
     }
 } elseif (sizeof($logFiles) != 0) {
-    $getFile = key ($logFiles);
+    $getFile = key($logFiles);
 } else {
     $getFile = '';
 }
-$numLogFiles = count ($logFiles);
+$numLogFiles = count($logFiles);
 
 // -----
 // If more files are in the log-file array than will be displayed, free up the memory associated with
@@ -142,7 +142,7 @@ $numLogFiles = count ($logFiles);
 //
 if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
     for ($i = 0, $n = $numLogFiles - MAX_LOG_FILES_TO_VIEW; $i < $n; $i++) {
-        array_pop ($logFiles);
+        array_pop($logFiles);
     }
 }
 ?>
@@ -223,12 +223,12 @@ if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
           </tr>
 
           <tr>
-            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf (TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, $sort_description, (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); ?></td>
+            <td class="main"><?php echo ((substr(HTTP_SERVER, 0, 5) != 'https') ? WARNING_NOT_SECURE : '') . sprintf(TEXT_INSTRUCTIONS, MAX_LOG_FILE_READ_SIZE, $sort_description, (($numLogFiles > MAX_LOG_FILES_TO_VIEW) ? MAX_LOG_FILES_TO_VIEW : $numLogFiles), $numLogFiles); ?></td>
             <td class="main" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
           
           <tr colspan="2">
-            <td><?php echo zen_draw_form ('logs_form', FILENAME_DISPLAY_LOGS, '', 'get') . '<b>' . DISPLAY_DEBUG_LOGS_ONLY . '</b>&nbsp;&nbsp;' . zen_draw_checkbox_field ('debug_only', 'on', (isset ($_GET['debug_only'])) ? true : false, '', 'onclick="this.form.submit();"') . zen_draw_hidden_field ('sort', $sort) . '</form>'; ?></td>
+            <td><?php echo zen_draw_form('logs_form', FILENAME_DISPLAY_LOGS, '', 'get') . '<b>' . DISPLAY_DEBUG_LOGS_ONLY . '</b>&nbsp;&nbsp;' . zen_draw_checkbox_field('debug_only', 'on', (isset ($_GET['debug_only'])) ? true : false, '', 'onclick="this.form.submit();"') . zen_draw_hidden_field('sort', $sort) . '</form>'; ?></td>
           </tr>
 
         </table></td>
@@ -238,7 +238,7 @@ if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
   
   <tr>    
     <td>
-      <form id="dlFormID" name="dlForm" action="<?php echo zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('action')) . 'action=delete', 'NONSSL'); ?>" method="post"><?php echo zen_draw_hidden_field ('securityToken', $_SESSION['securityToken']) . "\n"; ?>
+      <form id="dlFormID" name="dlForm" action="<?php echo zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array('action')) . 'action=delete', 'NONSSL'); ?>" method="post"><?php echo zen_draw_hidden_field('securityToken', $_SESSION['securityToken']) . "\n"; ?>
       <table border="0" width="100%" cellspacing="0" cellpadding="0">
       
       <tr>
@@ -247,13 +247,13 @@ if ($numLogFiles > MAX_LOG_FILES_TO_VIEW) {
             <td valign="top" width="50%"><table border="0" width="100%" cellspacing="0" cellpadding="2">
               <tr class="dataTableHeadingRow">
                 <td class="dataTableHeadingContent" align="left"><?php echo TABLE_HEADING_FILENAME; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_MODIFIED; ?><br /><a href="<?php echo zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('sort')) . 'sort=date_a', 'NONSSL'); ?>"><?php echo LOG_SORT_ASC; ?></a>&nbsp;&nbsp;<a href="<?php echo zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('sort')) . 'sort=date_d', 'NONSSL'); ?>"><?php echo LOG_SORT_DESC; ?></a></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_FILESIZE; ?><br /><a href="<?php echo zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('sort')) . 'sort=size_a', 'NONSSL'); ?>"><?php echo LOG_SORT_ASC; ?></a>&nbsp;&nbsp;<a href="<?php echo zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('sort')) . 'sort=size_d', 'NONSSL'); ?>"><?php echo LOG_SORT_DESC; ?></a></td>
+                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_MODIFIED; ?><br /><a href="<?php echo zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params(array('sort')) . 'sort=date_a', 'NONSSL'); ?>"><?php echo LOG_SORT_ASC; ?></a>&nbsp;&nbsp;<a href="<?php echo zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params(array('sort')) . 'sort=date_d', 'NONSSL'); ?>"><?php echo LOG_SORT_DESC; ?></a></td>
+                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_FILESIZE; ?><br /><a href="<?php echo zen_href_link (FILENAME_DISPLAY_LOGS, zen_get_all_get_params(array('sort')) . 'sort=size_a', 'NONSSL'); ?>"><?php echo LOG_SORT_ASC; ?></a>&nbsp;&nbsp;<a href="<?php echo zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params(array('sort')) . 'sort=size_d', 'NONSSL'); ?>"><?php echo LOG_SORT_DESC; ?></a></td>
                 <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_DELETE; ?></td>
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-reset ($logFiles);
+reset($logFiles);
 $fileData = '';
 $heading = array();
 $contents = array();
@@ -261,26 +261,31 @@ foreach ($logFiles as $curHash => $curFile) {
 ?>
               <tr>
                 <td class="dataTableContent" align="left"><?php echo $curFile['name']; ?></td>
-                <td class="dataTableContent" align="center"><?php echo date (PHP_DATE_TIME_FORMAT, $curFile['mtime']); ?></td>
+                <td class="dataTableContent" align="center"><?php echo date(PHP_DATE_TIME_FORMAT, $curFile['mtime']); ?></td>
                 <td class="dataTableContent<?php echo ($curFile['filesize'] > MAX_LOG_FILE_READ_SIZE) ? ' bigfile' : ''; ?>" align="center"><?php echo $curFile['filesize']; ?></td>
-                <td class="dataTableContent" align="center"><?php echo zen_draw_checkbox_field ('dList[' . $curHash . ']', false, false, '', 'class="cBox"'); ?></td>
-                <td class="dataTableContent" align="right"><?php if ($getFile == $curHash) { echo zen_image (DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_DISPLAY_LOGS, 'fID=' . $curHash . '&amp;' . zen_get_all_get_params (array ('fID'))) . '">' . zen_image (DIR_WS_IMAGES . 'icon_info.gif', ICON_INFO_VIEW) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="center"><?php echo zen_draw_checkbox_field('dList[' . $curHash . ']', false, false, '', 'class="cBox"'); ?></td>
+                <td class="dataTableContent" align="right"><?php if ($getFile == $curHash) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link(FILENAME_DISPLAY_LOGS, 'fID=' . $curHash . '&amp;' . zen_get_all_get_params(array('fID'))) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', ICON_INFO_VIEW) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
     if ($getFile == $curHash) {
-      $heading[] = array('text' => '<strong>' . TEXT_HEADING_INFO . '( ' . $curFile['name'] . ')</strong>');
-      $contents[] = array('align' => 'left', 'text' => '<div id="fContents">' . nl2br (htmlentities (trim (@file_get_contents($curFile['name'], NULL, NULL, -1, MAX_LOG_FILE_READ_SIZE)), ENT_COMPAT+ENT_IGNORE, CHARSET, false)) . '</div>');
+        $heading[] = array(
+            'text' => '<strong>' . TEXT_HEADING_INFO . '( ' . $curFile['name'] . ')</strong>'
+        );
+        $contents[] = array(
+            'align' => 'left', 
+            'text' => '<div id="fContents">' . nl2br (htmlentities (trim (@file_get_contents($curFile['name'], NULL, NULL, -1, MAX_LOG_FILE_READ_SIZE)), ENT_COMPAT+ENT_IGNORE, CHARSET, false)) . '</div>'
+        );
     }
 }
 ?>
             </table></td>
 <?php
-if ( zen_not_null ($heading) && zen_not_null ($contents) ) {
+if (zen_not_null($heading) && zen_not_null($contents)) {
 ?>
             <td id="contentsOuter" width="50%">
 <?php
     $box = new box;
-    echo $box->infoBox ($heading, $contents);
+    echo $box->infoBox($heading, $contents);
 ?>
             </td>
 <?php
@@ -295,8 +300,8 @@ if ($numLogFiles > 0) {
       <tr>
         <td id="theButtons">
           <div id="dButtons">
-            <div id="dSel"><?php echo zen_image_submit(BUTTON_DELETE_SELECTED, DELETE_SELECTED_ALT, 'name="dButton" value="delete" onclick="return buttonCheck(\'delete\');"'); /*v1.0.6c*/ ?></div>
-            <div id="dAll"><?php echo zen_image_submit(BUTTON_DELETE_ALL, DELETE_ALL_ALT, 'name="sButton" value="all" onclick="return buttonCheck(\'all\');"'); /*v1.0.6c*/ ?></div>
+            <div id="dSel"><?php echo zen_image_submit(BUTTON_DELETE_SELECTED, DELETE_SELECTED_ALT, 'name="dButton" value="delete" onclick="return buttonCheck(\'delete\');"'); ?></div>
+            <div id="dAll"><?php echo zen_image_submit(BUTTON_DELETE_ALL, DELETE_ALL_ALT, 'name="sButton" value="all" onclick="return buttonCheck(\'all\');"'); ?></div>
           </div>
           <div id="dSpace">&nbsp;</div>
         </td>
