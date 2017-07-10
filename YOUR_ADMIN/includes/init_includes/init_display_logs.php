@@ -8,7 +8,7 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define('DISPLAY_LOGS_CURRENT_VERSION', '2.1.0');
+define('DISPLAY_LOGS_CURRENT_VERSION', '2.1.1');
 
 //----
 // If the installation supports admin-page registration (i.e. v1.5.0 and later), then
@@ -23,7 +23,8 @@ if (function_exists('zen_register_admin_page')) {
 // -----
 // If the configuration values for the plugin's processing are not yet installed, set them up in the database.
 //
-if (!defined('DISPLAY_LOGS_MAX_DISPLAY')) {
+if (!defined('DISPLAY_LOGS_VERSION')) {
+    define('DISPLAY_LOGS_VERSION', DISPLAY_LOGS_CURRENT_VERSION);
     $db->Execute(
         "INSERT INTO " . TABLE_CONFIGURATION . " 
             ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function ) 
@@ -37,6 +38,18 @@ if (!defined('DISPLAY_LOGS_MAX_DISPLAY')) {
             ('Display Logs: Included File Prefixes', 'DISPLAY_LOGS_INCLUDED_FILES', 'myDEBUG-|AIM_Debug_|SIM_Debug_|FirstData_Debug_|Linkpoint_Debug_|Paypal|paypal|ipn_|zcInstall|notifier|usps|SHIP_usps', 'Identify the log-file <em>prefixes</em> to include in the display, separated by the pipe character (|).  Any intervening spaces are removed by the processing code.', 10, 102, now(), NULL, NULL),
             
             ('Display Logs: Excluded File Prefixes', 'DISPLAY_LOGS_EXCLUDED_FILES', '', 'Identify the log-file prefixes to <em>exclude</em> from the display, separated by the pipe character (|). Any intervening spaces are removed by the processing code.', 10, 103, now(), NULL, NULL)"
+    );
+}
+
+// -----
+// If the current plugin version is different from that recorded in the database, update the database!
+//
+if (DISPLAY_LOGS_VERSION != DISPLAY_LOGS_CURRENT_VERSION) {
+    $db->Execute(
+        "UPDATE " . TABLE_CONFIGURATION . "
+            SET configuration_value = '" . DISPLAY_LOGS_CURRENT_VERSION . "'
+          WHERE configuration_key = 'DISPLAY_LOGS_VERSION'
+          LIMIT 1"
     );
 }
 

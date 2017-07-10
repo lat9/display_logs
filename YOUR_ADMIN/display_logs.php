@@ -35,33 +35,6 @@ function sortLogSizeDesc($a, $b)
 require 'includes/application_top.php';
 
 // -----
-// Determine the current sort-method chosen by the admin user.
-//
-$sort = 'date_d';
-$sort_description = TEXT_MOST_RECENT;
-$sort_function = 'sortLogDateDesc';
-if (isset($_GET['sort'])) {
-    $sort = $_GET['sort'];
-    switch ($sort) {
-        case 'date_a':
-            $sort_description = TEXT_OLDEST;
-            $sort_function = 'sortLogDateAsc';
-            break;
-        case 'size_a':
-            $sort_description = TEXT_SMALLEST;
-            $sort_function = 'sortLogSizeAsc';
-            break;
-        case 'size_d':
-            $sort_description = TEXT_LARGEST;
-            $sort_function = 'sortLogSizeDesc';
-            break;
-        default:
-            $sort = 'date_a';
-            break;
-    }
-}
-
-// -----
 // If debug-logs-only has been selected, display only those files.  If multiple file prefixes are
 // to be either included or excluded, wrap that value with parenthese to make preg_match "happy".
 //
@@ -96,7 +69,6 @@ if ($max_logs_to_display < 1) {
 // Gather the current log files.
 //
 $logFiles = array();
-$numLogFiles = 0;
 foreach (array (DIR_FS_LOGS, DIR_FS_SQL_CACHE, DIR_FS_CATALOG . '/includes/modules/payment/paypal/logs') as $logFolder) {
     $logFolder = rtrim($logFolder, '/');
     $dir = @dir($logFolder);
@@ -105,15 +77,12 @@ foreach (array (DIR_FS_LOGS, DIR_FS_SQL_CACHE, DIR_FS_CATALOG . '/includes/modul
             if ( ($file != '.') && ($file != '..') && substr($file, 0, 1) != '.') {
                 if (preg_match('/^' . $files_to_match . '\.log$/', $file)) {
                     if ($files_to_exclude == '' || !preg_match('/^' . $files_to_exclude . '\.log$/', $file)) {
-                        $numLogFiles++;
-                        if ($numLogFiles <= $max_logs_to_display) {
-                            $hash = sha1($logFolder . '/' . $file);
-                            $logFiles[$hash] = array ( 
-                                'name'  => $logFolder . '/' . $file,
-                                'mtime' => filemtime($logFolder . '/' . $file),
-                                'filesize' => filesize($logFolder . '/' . $file)
-                            );
-                        }
+                        $hash = sha1($logFolder . '/' . $file);
+                        $logFiles[$hash] = array ( 
+                            'name'  => $logFolder . '/' . $file,
+                            'mtime' => filemtime($logFolder . '/' . $file),
+                            'filesize' => filesize($logFolder . '/' . $file)
+                        );
                     }
                 }
             }
@@ -122,8 +91,47 @@ foreach (array (DIR_FS_LOGS, DIR_FS_SQL_CACHE, DIR_FS_CATALOG . '/includes/modul
         unset($dir);
     }
 }
+
+// -----
+// Determine the current sort-method chosen by the admin user, sorting the list of matching
+// files based on that choice.
+//
+$sort = 'date_d';
+$sort_description = TEXT_MOST_RECENT;
+$sort_function = 'sortLogDateDesc';
+if (isset($_GET['sort'])) {
+    $sort = $_GET['sort'];
+    switch ($sort) {
+        case 'date_a':
+            $sort_description = TEXT_OLDEST;
+            $sort_function = 'sortLogDateAsc';
+            break;
+        case 'size_a':
+            $sort_description = TEXT_SMALLEST;
+            $sort_function = 'sortLogSizeAsc';
+            break;
+        case 'size_d':
+            $sort_description = TEXT_LARGEST;
+            $sort_function = 'sortLogSizeDesc';
+            break;
+        default:
+            $sort = 'date_a';
+            break;
+    }
+}
 uasort($logFiles, $sort_function);
 reset($logFiles);
+
+// -----
+// If more files were found than will be displayed, free up the memory associated with
+// those files' entries by popping them off the end of the array.
+//
+$numLogFiles = count($logFiles);
+if ($numLogFiles > $max_logs_to_display) {
+    for ($i = 0, $n = $numLogFiles - $max_logs_to_display; $i < $n; $i++) {
+        array_pop ($logFiles);
+    }
+}
 
 // -----
 // If any file delete requests have been made, process them first.
@@ -245,7 +253,7 @@ if ($max_log_file_size < 1) {
       <tr>
         <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?><span style="font-size: smaller;">&nbsp;&nbsp;(v2.0.1)</span></td>
+            <td class="pageHeading"><?php echo HEADING_TITLE; ?><span style="font-size: smaller;">&nbsp;&nbsp;(v<?php echo DISPLAY_LOGS_VERSION; ?>)</span></td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
 
