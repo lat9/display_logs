@@ -2,13 +2,13 @@
 // -----
 // Part of the "Display Logs" plugin for Zen Cart v1.5.0 or later
 //
-// Copyright (c) 2012-2017, Vinos de Frutas Tropicales (lat9)
+// Copyright (c) 2012-2019, Vinos de Frutas Tropicales (lat9)
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define('DISPLAY_LOGS_CURRENT_VERSION', '2.1.1');
+define('DISPLAY_LOGS_CURRENT_VERSION', '2.1.2');
 
 //----
 // If the installation supports admin-page registration (i.e. v1.5.0 and later), then

@@ -2,7 +2,7 @@
 // -----
 // Part of the "Display Logs" plugin for Zen Cart v1.5.0 or later
 //
-// Copyright (c) 2012-2017, Vinos de Frutas Tropicales (lat9)
+// Copyright (c) 2012-2019, Vinos de Frutas Tropicales (lat9)
 //
 
 // -----
@@ -39,7 +39,7 @@ require 'includes/application_top.php';
 // to be either included or excluded, wrap that value with parenthese to make preg_match "happy".
 //
 if (isset($_GET['debug_only'])) {
-    $files_to_match = 'myDEBUG-(adm-)?[0-9]+-[0-9]+';
+    $files_to_match = 'myDEBUG-(adm-)?[0-9]+-[0-9]+(-[0-9]+)?';
     $files_to_exclude = '';
 } else {
     $files_to_match = str_replace(' ', '', DISPLAY_LOGS_INCLUDED_FILES);
@@ -150,14 +150,14 @@ if (zen_not_null($action) && $action == 'delete') {
             }
         }
         if ($filesDeleted == $numFiles) {
-            $messageStack->add_session(sprintf (SUCCESS_FILES_DELETED, $numFiles), 'success');
+            $messageStack->add_session(sprintf(SUCCESS_FILES_DELETED, $numFiles), 'success');
         } else {
-            $messageStack->add_session(sprintf (WARNING_SOME_FILES_DELETED, $filesDeleted, $numFiles), 'warning');
+            $messageStack->add_session(sprintf(WARNING_SOME_FILES_DELETED, $filesDeleted, $numFiles), 'warning');
         }
     } else {
         $messageStack->add_session(WARNING_NO_FILES_SELECTED, 'warning');
     }
-    zen_redirect (zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params (array ('action'))));
+    zen_redirect (zen_href_link(FILENAME_DISPLAY_LOGS, zen_get_all_get_params(array('action'))));
 }
 
 if (isset($_GET['fID'])) {
