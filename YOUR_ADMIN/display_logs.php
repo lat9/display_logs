@@ -2,7 +2,7 @@
 // -----
 // Part of the "Display Logs" plugin for Zen Cart v1.5.0 or later
 //
-// Copyright (c) 2012-2019, Vinos de Frutas Tropicales (lat9)
+// Copyright (c) 2012-2020, Vinos de Frutas Tropicales (lat9)
 //
 
 // -----
@@ -39,7 +39,7 @@ require 'includes/application_top.php';
 // to be either included or excluded, wrap that value with parenthese to make preg_match "happy".
 //
 if (isset($_GET['debug_only'])) {
-    $files_to_match = 'myDEBUG-(adm-)?[0-9]+-[0-9]+(-[0-9]+)?';
+    $files_to_match = 'myDEBUG-(adm-)?[0-9]+-[0-9]+-[0-9]+((-deprecated)|(-warning)|(-error))?';
     $files_to_exclude = '';
 } else {
     $files_to_match = str_replace(' ', '', DISPLAY_LOGS_INCLUDED_FILES);

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="../vinos_favicon.ico" type="image/x-icon" />
 <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
 <title>Display Log Files</title>
 
@@ -61,7 +62,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>Display Log Files for Zen Cart v1.5.0 (and later)</h1>
-  <h3>Version 2.1.2 by lat9 &amp; Design75</h3>
+  <h3>Version 2.2.0 by lat9 &amp; Design75</h3>
   <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread">http://www.zen-cart.com/showthread.php?204058-Display-Log-Files-Support-Thread</a></p>
 
   <div class="tab-container" id="outer-container">
@@ -195,6 +196,13 @@ th { background-color: #eee; }
             
             <div id="changes">
               <ul>
+                <li>v2.2.0, 2020-01-23:<ul>
+                  <li>CHANGE: Update to 'align' with v3.1.0 of <em>Report All Errors</em>, as the log-file names might include a trailing severity indicator.</li>
+                  <li>The following files were changed:<ol>
+                    <li>/YOUR_ADMIN/display_logs.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_display_logs.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v2.1.2, 2019-09-05:<ul>
                   <li>BUGFIX: Correct 'Display debug-logs only' for zc156.</li>
                   <li>The following files were changed:<ol>
