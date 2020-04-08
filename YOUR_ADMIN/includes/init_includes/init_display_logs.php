@@ -8,7 +8,7 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define('DISPLAY_LOGS_CURRENT_VERSION', '2.2.0');
+define('DISPLAY_LOGS_CURRENT_VERSION', '2.2.1-beta1');
 
 //----
 // If the installation supports admin-page registration (i.e. v1.5.0 and later), then
